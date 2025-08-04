@@ -2,11 +2,13 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id ("java")
-    id ("application")
-    id ("checkstyle")
-    id ("jacoco")
+    id("java")
+    id("application")
+    id("checkstyle")
+    id("jacoco")
     id("org.sonarqube") version "6.2.0.5505"
+    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "hexlet.code"
@@ -20,6 +22,10 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.25.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.slf4j:slf4j-simple:2.0.17")
+    implementation("io.javalin:javalin:6.6.0")
+    implementation("io.javalin:javalin-bundle:6.6.0")
+    implementation("io.javalin:javalin-rendering:6.6.0")
 }
 
 sonar {
