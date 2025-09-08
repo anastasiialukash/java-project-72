@@ -22,6 +22,7 @@ repositories {
 dependencies {
     implementation("com.h2database:h2:2.3.232")
     implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("gg.jte:jte:3.2.0")
     testImplementation("org.assertj:assertj-core:3.25.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

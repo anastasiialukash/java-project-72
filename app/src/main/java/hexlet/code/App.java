@@ -1,14 +1,19 @@
 package hexlet.code;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.BaseRepository;
 import io.javalin.Javalin;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.javalin.rendering.template.JavalinJte;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class App {
@@ -34,8 +39,19 @@ public class App {
         }
         BaseRepository.dataSource = dataSource;
 
-        return Javalin.create(config -> config.bundledPlugins.enableDevLogging())
-                .get("/", ctx -> ctx.result("Hello World"));
+        var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
+        });
+
+        app.get("/", ctx -> {
+            Map<String, Object> model = Map.of(
+                    "title", "Main"
+            );
+            ctx.render("index.jte", model);
+        });
+
+        return app;
     }
 
     private static int getPort() {
@@ -48,5 +64,12 @@ public class App {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return templateEngine;
     }
 }
