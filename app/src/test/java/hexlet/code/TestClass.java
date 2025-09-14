@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestClass {
@@ -26,6 +27,7 @@ public class TestClass {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
+        System.clearProperty("JDBC_DATABASE_URL");
         app = App.getApp();
         app.start(0);
         int port = app.port();
@@ -75,12 +77,31 @@ public class TestClass {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            assertEquals(302, response.code()); // Redirect status code
-        }
+            assertEquals(302, response.code());
 
-        List<Url> urls = UrlRepository.getAll();
-        assertEquals(1, urls.size());
-        assertEquals("https://example.com", urls.get(0).getName());
+            String redirectLocation = response.header("Location");
+            assertNotNull(redirectLocation);
+            assertTrue(redirectLocation.startsWith("/urls/"));
+
+            String idStr = redirectLocation.substring("/urls/".length());
+            int urlId = Integer.parseInt(idStr);
+
+            List<Url> urls = UrlRepository.getAll();
+            assertEquals(1, urls.size());
+            assertEquals("https://example.com", urls.get(0).getName());
+            assertEquals(urlId, urls.get(0).getId());
+
+            Request getRequest = new Request.Builder()
+                    .url(baseUrl + redirectLocation)
+                    .build();
+
+            try (Response getResponse = client.newCall(getRequest).execute()) {
+                assertEquals(200, getResponse.code());
+                String body = getResponse.body().string();
+                assertTrue(body.contains("https://example.com"));
+                assertTrue(body.contains("URL Details"));
+            }
+        }
     }
 
     @Test
@@ -95,16 +116,62 @@ public class TestClass {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            assertEquals(302, response.code()); // Redirect status code
-        }
+            assertEquals(302, response.code());
+            assertEquals("/", response.header("Location"));
+            List<Url> urls = UrlRepository.getAll();
+            assertEquals(0, urls.size());
 
-        List<Url> urls = UrlRepository.getAll();
-        assertEquals(0, urls.size()); // No URL should be added
+            Request getRequest = new Request.Builder()
+                .url(baseUrl + "/")
+                .build();
+
+            try (Response getResponse = client.newCall(getRequest).execute()) {
+                assertEquals(200, getResponse.code());
+                String body = getResponse.body().string();
+                assertTrue(body.contains("Check website"));
+            }
+        }
+    }
+
+    @Test
+    public void testAddDuplicateUrl() throws IOException, SQLException {
+        var url = new Url();
+        url.setName("https://example.com");
+        url.setCreatedAt(new java.util.Date());
+        UrlRepository.save(url);
+
+        FormBody formBody = new FormBody.Builder()
+                .add("url", "https://example.com")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(baseUrl + "/urls")
+                .post(formBody)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assertEquals(302, response.code());
+            String redirectLocation = response.header("Location");
+            assertEquals("/urls/" + url.getId(), redirectLocation);
+
+            List<Url> urls = UrlRepository.getAll();
+            assertEquals(1, urls.size());
+
+            Request getRequest = new Request.Builder()
+                    .url(baseUrl + redirectLocation)
+                    .build();
+
+            try (Response getResponse = client.newCall(getRequest).execute()) {
+                assertEquals(200, getResponse.code());
+                String body = getResponse.body().string();
+                assertTrue(body.contains("URL Details"));
+                assertTrue(body.contains("https://example.com"));
+            }
+        }
     }
 
     @Test
     public void testUrlsPage() throws IOException, SQLException {
-        // Add a URL to the database
         var url = new Url();
         url.setName("https://example.com");
         url.setCreatedAt(new java.util.Date());
@@ -136,6 +203,28 @@ public class TestClass {
             assertEquals(200, response.code());
             String body = response.body().string();
             assertTrue(body.contains("https://example.com"));
+        }
+    }
+
+    @Test
+    public void testNonExistentUrlPage() throws IOException {
+        Request request = new Request.Builder()
+                .url(baseUrl + "/urls/9999")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assertEquals(404, response.code());
+        }
+    }
+
+    @Test
+    public void testInvalidUrlIdFormat() throws IOException {
+        Request request = new Request.Builder()
+                .url(baseUrl + "/urls/invalid")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assertEquals(404, response.code());
         }
     }
 }
