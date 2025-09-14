@@ -1,5 +1,6 @@
-@import gg.jte.Content
-@param String title
+@import hexlet.model.Url
+
+@param Url url
 @param String flash = null
 
 <!doctype html>
@@ -7,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Site Analyzer</title>
+    <title>URL Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </head>
@@ -39,17 +40,26 @@
                 </div>
             @endif
 
-            <div class="row">
-                <div class="col-12 col-md-10 col-lg-8 mx-auto">
-                    <h1 class="display-4 mb-3">Check website</h1>
-                    <form action="/urls" method="post" class="mb-3">
-                        <div class="input-group">
-                            <input type="text" name="url" class="form-control" placeholder="https://example.com" required>
-                            <button type="submit" class="btn btn-primary">Check</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <h1 class="mb-4">URL Details</h1>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>${url.getId()}</td>
+                    </tr>
+                    <tr>
+                        <th>URL</th>
+                        <td>${url.getName()}</td>
+                    </tr>
+                    <tr>
+                        <th>Created At</th>
+                        <td>${url.getCreatedAt()}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a href="/urls" class="btn btn-primary">Back to URLs</a>
         </div>
     </main>
 
