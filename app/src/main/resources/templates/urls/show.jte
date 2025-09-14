@@ -1,4 +1,5 @@
 @import hexlet.model.Url
+@import java.text.SimpleDateFormat
 
 @param Url url
 @param String flash = null
@@ -54,7 +55,7 @@
                     </tr>
                     <tr>
                         <th>Created At</th>
-                        <td>${url.getCreatedAt()}</td>
+                        <td>${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(url.getCreatedAt())}</td>
                     </tr>
                 </tbody>
             </table>

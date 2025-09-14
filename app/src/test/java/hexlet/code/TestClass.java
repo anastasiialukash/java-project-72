@@ -30,7 +30,9 @@ public class TestClass {
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder()
+                .followRedirects(false)
+                .build();
     }
 
     @AfterAll
