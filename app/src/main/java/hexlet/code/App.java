@@ -116,7 +116,7 @@ public class App {
             try {
                 var urls = UrlRepository.getAll();
                 Map<String, Object> model;
-                
+
                 if (ctx.sessionAttribute("flash") != null) {
                     model = Map.of(
                             "urls", urls,
@@ -127,7 +127,7 @@ public class App {
                             "urls", urls
                     );
                 }
-                
+
                 ctx.sessionAttribute("flash", null);
                 ctx.render("urls/index.jte", model);
             } catch (SQLException e) {
@@ -147,7 +147,7 @@ public class App {
 
                 Map<String, Object> model = new HashMap<>();
                 model.put("url", urlOptional.get());
-                
+
                 if (ctx.sessionAttribute("flash") != null) {
                     model.put("flash", ctx.sessionAttribute("flash"));
                 }
