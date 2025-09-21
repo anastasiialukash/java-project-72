@@ -1,8 +1,11 @@
 @import hexlet.model.Url
+@import hexlet.model.UrlCheck
 @import java.util.List
+@import java.util.Map
 @import java.text.SimpleDateFormat
 
 @param List<Url> urls
+@param Map<Integer, UrlCheck> urlChecksMap
 @param String flash = null
 
 <!doctype html>
@@ -50,6 +53,8 @@
                         <th>ID</th>
                         <th>URL</th>
                         <th>Created At</th>
+                        <th>Last Check</th>
+                        <th>Status Code</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +65,16 @@
                                 <a href="/urls/${url.getId()}">${url.getName()}</a>
                             </td>
                             <td>${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(url.getCreatedAt())}</td>
+                            <td>
+                                @if(urlChecksMap.containsKey(url.getId()))
+                                    ${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(urlChecksMap.get(url.getId()).getCreatedAt())}
+                                @endif
+                            </td>
+                            <td>
+                                @if(urlChecksMap.containsKey(url.getId()))
+                                    ${urlChecksMap.get(url.getId()).getStatusCode()}
+                                @endif
+                            </td>
                         </tr>
                     @endfor
                 </tbody>

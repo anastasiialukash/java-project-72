@@ -1,7 +1,10 @@
 @import hexlet.model.Url
+@import hexlet.model.UrlCheck
 @import java.text.SimpleDateFormat
+@import java.util.List
 
 @param Url url
+@param List<UrlCheck> checks
 @param String flash = null
 
 <!doctype html>
@@ -59,6 +62,38 @@
                     </tr>
                 </tbody>
             </table>
+
+            <form action="/urls/${url.getId()}/checks" method="post">
+                <button type="submit" class="btn btn-primary">Check</button>
+            </form>
+
+            <div class="mt-5">
+                <h2>Checks</h2>
+                <table class="table table-bordered table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status Code</th>
+                            <th>Title</th>
+                            <th>H1</th>
+                            <th>Description</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(var check : checks)
+                            <tr>
+                                <td>${check.getId()}</td>
+                                <td>${check.getStatusCode()}</td>
+                                <td>${check.getTitle()}</td>
+                                <td>${check.getH1()}</td>
+                                <td>${check.getDescription()}</td>
+                                <td>${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(check.getCreatedAt())}</td>
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
+            </div>
 
             <a href="/urls" class="btn btn-primary">Back to URLs</a>
         </div>
