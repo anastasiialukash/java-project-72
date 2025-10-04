@@ -131,7 +131,7 @@ public class App {
             try {
                 var existingUrl = UrlRepository.findByName(normalizedUrl);
                 if (existingUrl.isPresent()) {
-                    ctx.sessionAttribute("flash", "The url already exists");
+                    ctx.sessionAttribute("flash", "Страница уже существует");
                     ctx.redirect("/urls/" + existingUrl.get().getId());
                     return;
                 }
@@ -142,7 +142,7 @@ public class App {
 
                 UrlRepository.save(urlEntity);
 
-                ctx.sessionAttribute("flash", "The url is added successfully");
+                ctx.sessionAttribute("flash", "Страница успешно добавлена");
                 ctx.redirect("/urls/" + urlEntity.getId());
             } catch (SQLException e) {
                 ctx.sessionAttribute("flash", "The DB error");
@@ -250,7 +250,7 @@ public class App {
 
                 UrlCheckRepository.save(urlCheck);
 
-                ctx.sessionAttribute("flash", "Page has been checked successfully");
+                ctx.sessionAttribute("flash", "Страница успешно проверена");
             } catch (Exception e) {
                 System.out.println("[DEBUG_LOG] URL check failed: " + e.getMessage());
                 String errorMessage = "Failed to check the page";

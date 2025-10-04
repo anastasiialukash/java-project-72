@@ -90,7 +90,7 @@ class TestClass {
         try (Response response = client.newCall(request).execute()) {
             assertEquals(200, response.code());
             String body = response.body().string();
-            assertTrue(body.contains("Check website"));
+            assertTrue(body.contains("Анализатор страниц"));
         }
     }
 
@@ -128,7 +128,7 @@ class TestClass {
                 assertEquals(200, getResponse.code());
                 String body = getResponse.body().string();
                 assertTrue(body.contains("https://example.com"));
-                assertTrue(body.contains("URL Details"));
+                assertTrue(body.contains("Анализатор страниц"));
             }
         }
     }
@@ -157,7 +157,7 @@ class TestClass {
             try (Response getResponse = client.newCall(getRequest).execute()) {
                 assertEquals(200, getResponse.code());
                 String body = getResponse.body().string();
-                assertTrue(body.contains("Check website"));
+                assertTrue(body.contains("Анализатор страниц"));
             }
         }
     }
@@ -193,7 +193,7 @@ class TestClass {
             try (Response getResponse = client.newCall(getRequest).execute()) {
                 assertEquals(200, getResponse.code());
                 String body = getResponse.body().string();
-                assertTrue(body.contains("URL Details"));
+                assertTrue(body.contains("Анализатор страниц"));
                 assertTrue(body.contains("https://example.com"));
             }
         }

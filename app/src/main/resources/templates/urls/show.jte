@@ -10,101 +10,100 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>URL Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Анализатор страниц</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Site Analyzer</a>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Анализатор страниц</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/urls">URLs</a>
-                    </li>
-                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Главная</a>
+                    <a class="nav-link" href="/urls">Сайты</a>
+                </div>
             </div>
         </div>
     </nav>
 
     <main class="flex-grow-1">
-        <div class="container mt-4">
+            
+            <section>
+                
+        <div class="container-lg mt-5">
             @if(flash != null)
-                <div class="alert alert-info" role="alert">
-                    ${flash}
+                <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
+                    <p class="m-0">${flash}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            
+            <h1>Сайт: ${url.getName()}</h1>
 
-            <h1 class="mb-4">URL Details</h1>
-
-            <table class="table table-bordered">
+            <table class="table table-bordered table-hover mt-3">
                 <tbody>
-                    <tr>
-                        <th>ID</th>
-                        <td>${url.getId()}</td>
-                    </tr>
-                    <tr>
-                        <th>URL</th>
-                        <td>${url.getName()}</td>
-                    </tr>
-                    <tr>
-                        <th>Created At</th>
-                        <td>${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(url.getCreatedAt())}</td>
-                    </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>${url.getId()}</td>
+                </tr>
+                <tr>
+                    <td>Имя</td>
+                    <td>${url.getName()}</td>
+                </tr>
+                <tr>
+                    <td>Дата создания</td>
+                    <td>${new SimpleDateFormat("MM/dd/yyyy HH:mm").format(url.getCreatedAt())}</td>
+                </tr>
                 </tbody>
             </table>
 
-            <form action="/urls/${url.getId()}/checks" method="post">
-                <button type="submit" class="btn btn-primary">Check</button>
+            <h2 class="mt-5">Проверки</h2>
+            <form method="post" action="/urls/${url.getId()}/checks">
+                <button type="submit" class="btn btn-primary">Запустить проверку</button>
             </form>
 
-            <div class="mt-5">
-                <h2>Checks</h2>
-                <table class="table table-bordered table-hover mt-3">
-                    <thead>
+            <table class="table table-bordered table-hover mt-3">
+                <thead>
+                    <tr><th class="col-1">ID</th>
+                    <th class="col-1">Код ответа</th>
+                    <th>title</th>
+                    <th>h1</th>
+                    <th>description</th>
+                    <th class="col-2">Дата проверки</th>
+                </tr></thead>
+                <tbody>
+                    @for(var check : checks)
                         <tr>
-                            <th>ID</th>
-                            <th>Status Code</th>
-                            <th>Title</th>
-                            <th>H1</th>
-                            <th>Description</th>
-                            <th>Created At</th>
+                            <td>${check.getId()}</td>
+                            <td>${check.getStatusCode()}</td>
+                            <td>${check.getTitle()}</td>
+                            <td>${check.getH1()}</td>
+                            <td>${check.getDescription()}</td>
+                            <td>${new SimpleDateFormat("MM/dd/yyyy HH:mm").format(check.getCreatedAt())}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @for(var check : checks)
-                            <tr>
-                                <td>${check.getId()}</td>
-                                <td>${check.getStatusCode()}</td>
-                                <td>${check.getTitle()}</td>
-                                <td>${check.getH1()}</td>
-                                <td>${check.getDescription()}</td>
-                                <td>${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(check.getCreatedAt())}</td>
-                            </tr>
-                        @endfor
-                    </tbody>
-                </table>
-            </div>
-
-            <a href="/urls" class="btn btn-primary">Back to URLs</a>
+                    @endfor
+                </tbody>
+            </table>
         </div>
-    </main>
+    
+            </section>
+        </main>
 
     <footer class="footer border-top py-3 mt-5 bg-light">
-        <div class="container">
+        <div class="container-xl">
             <div class="text-center">
-                Created by Hexlet
+                created by
+                <a href="https://ru.hexlet.io" target="_blank">Hexlet</a>
             </div>
         </div>
     </footer>
-</body>
-</html>
+    
+
+</body></html>
