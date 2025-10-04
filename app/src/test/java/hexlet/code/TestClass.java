@@ -264,23 +264,9 @@ class TestClass {
         url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
-        String mockHtml = """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Test Page</title>
-                    <meta name="description" content="Test description">
-                </head>
-                <body>
-                    <h1>Test Header</h1>
-                    <p>Test paragraph</p>
-                </body>
-                </html>
-                """;
-
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody(mockHtml)
+                .setBody(getMockHtml())
                 .addHeader("Content-Type", "text/html"));
 
         Request request = new Request.Builder()
@@ -324,7 +310,6 @@ class TestClass {
         url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
-        // Send request to check URL
         Request request = new Request.Builder()
                 .url(baseUrl + "/urls/" + url.getId() + "/checks")
                 .post(new FormBody.Builder().build())
@@ -347,5 +332,21 @@ class TestClass {
                 assertTrue(body.contains("Failed to check the page"));
             }
         }
+    }
+
+    private String getMockHtml() {
+        return """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Test Page</title>
+                    <meta name="description" content="Test description">
+                </head>
+                <body>
+                    <h1>Test Header</h1>
+                    <p>Test paragraph</p>
+                </body>
+                </html>
+                """;
     }
 }
