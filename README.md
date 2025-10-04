@@ -41,7 +41,7 @@
 
 1. Клонировать репозиторий:
    ```bash
-   git clone [URL репозитория]
+   git clone https://github.com/anastasiialukash/java-project-72.git
    cd java-project-72
    ```
 
