@@ -1,6 +1,7 @@
-@import hexlet.model.Url
-@import hexlet.model.UrlCheck
-@import java.text.SimpleDateFormat
+@import hexlet.code.model.Url
+@import hexlet.code.model.UrlCheck
+@import java.time.format.DateTimeFormatter
+@import java.time.ZoneId
 @import java.util.List
 
 @param Url url
@@ -59,7 +60,7 @@
                 </tr>
                 <tr>
                     <td>Дата создания</td>
-                    <td>${new SimpleDateFormat("MM/dd/yyyy HH:mm").format(url.getCreatedAt())}</td>
+                    <td>${DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(ZoneId.systemDefault()).format(url.getCreatedAt())}</td>
                 </tr>
                 </tbody>
             </table>
@@ -86,7 +87,7 @@
                             <td>${check.getTitle()}</td>
                             <td>${check.getH1()}</td>
                             <td>${check.getDescription()}</td>
-                            <td>${new SimpleDateFormat("MM/dd/yyyy HH:mm").format(check.getCreatedAt())}</td>
+                            <td>${DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(ZoneId.systemDefault()).format(check.getCreatedAt())}</td>
                         </tr>
                     @endfor
                 </tbody>

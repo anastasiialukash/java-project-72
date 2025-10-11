@@ -12,9 +12,9 @@ RUN ./gradlew --no-daemon dependencies
 COPY app/src src
 COPY app/config config
 
-RUN ./gradlew --no-daemon build
+RUN ./gradlew --no-daemon installDist
 
 ENV JAVA_OPTS="-Xmx512M -Xms512M"
 EXPOSE 7070
 
-CMD ["java", "-jar", "build/libs/app-1.0-SNAPSHOT-all.jar"]
+CMD ["./build/install/app/bin/app"]

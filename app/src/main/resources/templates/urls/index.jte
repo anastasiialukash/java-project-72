@@ -1,11 +1,12 @@
-@import hexlet.model.Url
-@import hexlet.model.UrlCheck
+@import hexlet.code.model.Url
+@import hexlet.code.model.UrlCheck
 @import java.util.List
 @import java.util.Map
-@import java.text.SimpleDateFormat
+@import java.time.format.DateTimeFormatter
+@import java.time.ZoneId
 
 @param List<Url> urls
-@param Map<Integer, UrlCheck> urlChecksMap
+@param Map<Long, UrlCheck> urlChecksMap
 @param String flash = null
 
 <!doctype html>
@@ -66,7 +67,7 @@
                             </td>
                             <td>
                                 @if(urlChecksMap.containsKey(url.getId()))
-                                    ${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(urlChecksMap.get(url.getId()).getCreatedAt())}
+                                    ${DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault()).format(urlChecksMap.get(url.getId()).getCreatedAt())}
                                 @endif
                             </td>
                             <td>

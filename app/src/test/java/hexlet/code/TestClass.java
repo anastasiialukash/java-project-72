@@ -1,9 +1,9 @@
 package hexlet.code;
 
-import hexlet.model.Url;
-import hexlet.model.UrlCheck;
-import hexlet.repository.UrlCheckRepository;
-import hexlet.repository.UrlRepository;
+import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.UrlCheckRepository;
+import hexlet.code.repository.UrlRepository;
 import io.javalin.Javalin;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -74,7 +74,7 @@ class TestClass {
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        try (var conn = UrlRepository.dataSource.getConnection();
+        try (var conn = hexlet.code.BaseRepository.dataSource.getConnection();
              var statement = conn.createStatement()) {
             statement.execute("DELETE FROM url_checks");
             statement.execute("DELETE FROM urls");
@@ -166,7 +166,6 @@ class TestClass {
     public void testAddDuplicateUrl() throws IOException, SQLException {
         var url = new Url();
         url.setName("https://example.com");
-        url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
         FormBody formBody = new FormBody.Builder()
@@ -203,7 +202,6 @@ class TestClass {
     public void testUrlsPage() throws IOException, SQLException {
         var url = new Url();
         url.setName("https://example.com");
-        url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
         Request request = new Request.Builder()
@@ -221,7 +219,6 @@ class TestClass {
     public void testSpecificUrlPage() throws IOException, SQLException {
         var url = new Url();
         url.setName("https://example.com");
-        url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
         Request request = new Request.Builder()
@@ -261,7 +258,6 @@ class TestClass {
     public void testUrlCheck() throws IOException, SQLException {
         var url = new Url();
         url.setName(mockWebServer.url("/").toString().replaceAll("/$", ""));
-        url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
         mockWebServer.enqueue(new MockResponse()
@@ -307,7 +303,6 @@ class TestClass {
     public void testFailedUrlCheck() throws IOException, SQLException {
         var url = new Url();
         url.setName("https://non-existent-domain-12345.com");
-        url.setCreatedAt(new java.util.Date());
         UrlRepository.save(url);
 
         Request request = new Request.Builder()
