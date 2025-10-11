@@ -29,7 +29,7 @@ public class UrlController {
         ctx.render("index.jte", model);
     }
 
-    public static void handleUrlCreation(Context ctx) throws MalformedURLException {
+    public static void handleUrlCreation(Context ctx) throws MalformedURLException, SQLException {
         String inputUrl = ctx.formParam("url");
 
         try {
@@ -45,55 +45,43 @@ public class UrlController {
                 normalizedUrl += ":" + port;
             }
 
-            try {
-                var existingUrl = UrlRepository.findByName(normalizedUrl);
-                if (existingUrl.isPresent()) {
-                    ctx.sessionAttribute("flash", "Страница уже существует");
-                    ctx.redirect("/urls/" + existingUrl.get().getId());
-                    return;
-                }
-
-                var urlEntity = new Url();
-                urlEntity.setName(normalizedUrl);
-                // Creation date will be set in the repository
-
-                UrlRepository.save(urlEntity);
-
-                ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                ctx.redirect("/urls/" + urlEntity.getId());
-            } catch (SQLException e) {
-                ctx.sessionAttribute("flash", "The DB error");
-                ctx.redirect("/");
+            var existingUrl = UrlRepository.findByName(normalizedUrl);
+            if (existingUrl.isPresent()) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.redirect("/urls/" + existingUrl.get().getId());
+                return;
             }
+
+            var urlEntity = new Url();
+            urlEntity.setName(normalizedUrl);
+
+            UrlRepository.save(urlEntity);
+
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.redirect("/urls/" + urlEntity.getId());
         } catch (URISyntaxException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Invalid url");
             ctx.redirect("/");
         }
     }
 
-    public static void handleUrlsListing(Context ctx) {
-        try {
-            var urls = UrlRepository.getAll();
-            Map<String, Object> model = new HashMap<>();
-            model.put("urls", urls);
+    public static void handleUrlsListing(Context ctx) throws SQLException {
+        var urls = UrlRepository.getAll();
+        Map<String, Object> model = new HashMap<>();
+        model.put("urls", urls);
 
-            // Use the optimized method to get all latest checks in one query
-            var urlChecksMap = UrlCheckRepository.findLatestChecks();
-            model.put("urlChecksMap", urlChecksMap);
+        var urlChecksMap = UrlCheckRepository.findLatestChecks();
+        model.put("urlChecksMap", urlChecksMap);
 
-            if (ctx.sessionAttribute("flash") != null) {
-                model.put("flash", ctx.sessionAttribute("flash"));
-            }
-
-            ctx.sessionAttribute("flash", null);
-            ctx.render("urls/index.jte", model);
-        } catch (SQLException e) {
-            ctx.sessionAttribute("flash", "DB error");
-            ctx.redirect("/");
+        if (ctx.sessionAttribute("flash") != null) {
+            model.put("flash", ctx.sessionAttribute("flash"));
         }
+
+        ctx.sessionAttribute("flash", null);
+        ctx.render("urls/index.jte", model);
     }
 
-    public static void handleSingleUrlView(Context ctx) {
+    public static void handleSingleUrlView(Context ctx) throws SQLException {
         try {
             int id = Integer.parseInt(ctx.pathParam("id"));
             var urlEntity = UrlRepository.findById(id)
@@ -111,15 +99,12 @@ public class UrlController {
 
             ctx.sessionAttribute("flash", null);
             ctx.render("urls/show.jte", model);
-        } catch (SQLException e) {
-            ctx.sessionAttribute("flash", "DB error");
-            ctx.redirect("/");
         } catch (NumberFormatException e) {
             throw new NotFoundResponse("Invalid URL ID");
         }
     }
 
-    public static void handleUrlCheck(Context ctx) {
+    public static void handleUrlCheck(Context ctx) throws SQLException {
         try {
             int id = Integer.parseInt(ctx.pathParam("id"));
             var urlEntity = UrlRepository.findById(id)
@@ -147,7 +132,6 @@ public class UrlController {
 
                 var urlCheck = new UrlCheck(statusCode, title, h1, description);
                 urlCheck.setUrlId(urlEntity.getId());
-                // Creation date will be set in the repository
 
                 UrlCheckRepository.save(urlCheck);
 
@@ -160,9 +144,6 @@ public class UrlController {
             }
 
             ctx.redirect("/urls/" + id);
-        } catch (SQLException e) {
-            ctx.sessionAttribute("flash", "DB error");
-            ctx.redirect("/");
         } catch (NumberFormatException e) {
             throw new NotFoundResponse("Invalid URL ID");
         }

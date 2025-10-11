@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class App {
@@ -62,17 +61,23 @@ public class App {
 
         app.exception(Exception.class, (e, ctx) -> {
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
-            ctx.json(Map.of("error", "Internal server error", "message", e.getMessage()));
+            ctx.json(new ErrorResponse("Internal server error", e.getMessage()));
         });
 
         app.exception(IllegalArgumentException.class, (e, ctx) -> {
             ctx.status(HttpStatus.BAD_REQUEST);
-            ctx.json(Map.of("error", "Bad request", "message", e.getMessage()));
+            ctx.json(new ErrorResponse("Bad request", e.getMessage()));
         });
 
         app.exception(io.javalin.http.NotFoundResponse.class, (e, ctx) -> {
             ctx.status(HttpStatus.NOT_FOUND);
-            ctx.json(Map.of("error", "Not found", "message", e.getMessage()));
+            ctx.json(new ErrorResponse("Not found", e.getMessage()));
+        });
+
+        app.exception(SQLException.class, (e, ctx) -> {
+            ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            ctx.sessionAttribute("flash", "Database error");
+            ctx.redirect("/");
         });
 
         app.get("/", UrlController::handleRootRoute);
