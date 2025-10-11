@@ -66,13 +66,13 @@
                                 <a href="/urls/${url.getId()}">${url.getName()}</a>
                             </td>
                             <td>
-                                @if(urlChecksMap.containsKey(url.getId()))
-                                    ${DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault()).format(urlChecksMap.get(url.getId()).getCreatedAt())}
+                                @if(urlChecksMap.containsKey((long) url.getId()))
+                                    ${DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault()).format(urlChecksMap.get((long) url.getId()).getCreatedAt())}
                                 @endif
                             </td>
                             <td>
-                                @if(urlChecksMap.containsKey(url.getId()))
-                                    ${urlChecksMap.get(url.getId()).getStatusCode()}
+                                @if(urlChecksMap.containsKey((long) url.getId()))
+                                    ${urlChecksMap.get((long) url.getId()).getStatusCode()}
                                 @endif
                             </td>
                         </tr>
