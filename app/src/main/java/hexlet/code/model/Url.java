@@ -38,6 +38,13 @@ public class Url {
         this.lastCheckAt = check.getCreatedAt();
     }
 
+    /**
+     * Checks if the URL has been checked at least once.
+     * This is determined by whether the statusCode field is not null,
+     * which is set when a check is performed on the URL.
+     *
+     * @return true if the URL has been checked, false otherwise
+     */
     public boolean hasBeenChecked() {
         return statusCode != null;
     }
