@@ -29,6 +29,13 @@ public class Url {
         this.name = name;
     }
 
+    /**
+     * Adds a URL check to this URL's list of checks and updates the URL's properties.
+     * This method updates the statusCode, title, h1, description, and lastCheckAt fields
+     * with the corresponding values from the provided check.
+     *
+     * @param check the UrlCheck object to add to this URL
+     */
     public void addCheck(UrlCheck check) {
         this.checks.add(check);
         this.statusCode = check.getStatusCode();
