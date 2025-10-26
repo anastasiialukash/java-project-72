@@ -2,7 +2,6 @@ package hexlet.code.controller;
 
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
-import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -52,9 +51,7 @@ public class UrlController {
                 return;
             }
 
-            var urlEntity = new Url();
-            urlEntity.setName(normalizedUrl);
-
+            var urlEntity = new Url(normalizedUrl);
             UrlRepository.save(urlEntity);
 
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
@@ -70,9 +67,6 @@ public class UrlController {
         Map<String, Object> model = new HashMap<>();
         model.put("urls", urls);
 
-        var urlChecksMap = UrlCheckRepository.findLatestChecks();
-        model.put("urlChecksMap", urlChecksMap);
-
         if (ctx.sessionAttribute("flash") != null) {
             model.put("flash", ctx.sessionAttribute("flash"));
         }
@@ -87,11 +81,8 @@ public class UrlController {
             var urlEntity = UrlRepository.findById(id)
                     .orElseThrow(() -> new NotFoundResponse("URL not found"));
 
-            var checks = UrlCheckRepository.findByUrlId(urlEntity.getId());
-
             Map<String, Object> model = new HashMap<>();
             model.put("url", urlEntity);
-            model.put("checks", checks);
 
             if (ctx.sessionAttribute("flash") != null) {
                 model.put("flash", ctx.sessionAttribute("flash"));
@@ -131,9 +122,7 @@ public class UrlController {
                 }
 
                 var urlCheck = new UrlCheck(statusCode, title, h1, description);
-                urlCheck.setUrlId(urlEntity.getId());
-
-                UrlCheckRepository.save(urlCheck);
+                UrlRepository.saveCheck(urlEntity, urlCheck);
 
                 ctx.sessionAttribute("flash", "Страница успешно проверена");
             } catch (Exception e) {

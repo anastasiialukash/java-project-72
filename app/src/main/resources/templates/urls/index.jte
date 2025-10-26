@@ -1,12 +1,9 @@
 @import hexlet.code.model.Url
-@import hexlet.code.model.UrlCheck
 @import java.util.List
-@import java.util.Map
 @import java.time.format.DateTimeFormatter
 @import java.time.ZoneId
 
 @param List<Url> urls
-@param Map<Long, UrlCheck> urlChecksMap
 @param String flash = null
 
 <!doctype html>
@@ -66,13 +63,13 @@
                                 <a href="/urls/${url.getId()}">${url.getName()}</a>
                             </td>
                             <td>
-                                @if(urlChecksMap.containsKey((long) url.getId()))
-                                    ${DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault()).format(urlChecksMap.get((long) url.getId()).getCreatedAt())}
+                                @if(url.hasBeenChecked())
+                                    ${DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault()).format(url.getLastCheckAt())}
                                 @endif
                             </td>
                             <td>
-                                @if(urlChecksMap.containsKey((long) url.getId()))
-                                    ${urlChecksMap.get((long) url.getId()).getStatusCode()}
+                                @if(url.hasBeenChecked())
+                                    ${url.getStatusCode()}
                                 @endif
                             </td>
                         </tr>

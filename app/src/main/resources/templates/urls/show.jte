@@ -5,7 +5,6 @@
 @import java.util.List
 
 @param Url url
-@param List<UrlCheck> checks
 @param String flash = null
 
 <!doctype html>
@@ -80,7 +79,7 @@
                     <th class="col-2">Дата проверки</th>
                 </tr></thead>
                 <tbody>
-                    @for(var check : checks)
+                    @for(var check : url.getChecks())
                         <tr>
                             <td>${check.getId()}</td>
                             <td>${check.getStatusCode()}</td>
