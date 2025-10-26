@@ -13,6 +13,7 @@ import io.javalin.rendering.template.JavalinJte;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
@@ -77,6 +78,16 @@ public class App {
         app.exception(SQLException.class, (e, ctx) -> {
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.sessionAttribute("flash", "Database error");
+            ctx.redirect("/");
+        });
+
+        app.exception(NumberFormatException.class, (e, ctx) -> {
+            ctx.status(HttpStatus.NOT_FOUND);
+            ctx.json(new ErrorResponse("Not found", "Invalid ID format"));
+        });
+
+        app.exception(URISyntaxException.class, (e, ctx) -> {
+            ctx.sessionAttribute("flash", "Invalid url");
             ctx.redirect("/");
         });
 

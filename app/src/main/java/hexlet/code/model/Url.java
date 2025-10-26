@@ -21,14 +21,14 @@ public class Url {
     private Instant lastCheckAt;
 
     private List<UrlCheck> checks = new ArrayList<>();
-    
+
     public Url() {
     }
-    
+
     public Url(String name) {
         this.name = name;
     }
-    
+
     public void addCheck(UrlCheck check) {
         this.checks.add(check);
         this.statusCode = check.getStatusCode();
@@ -37,7 +37,7 @@ public class Url {
         this.description = check.getDescription();
         this.lastCheckAt = check.getCreatedAt();
     }
-    
+
     public boolean hasBeenChecked() {
         return statusCode != null;
     }
